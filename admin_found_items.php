@@ -10,9 +10,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// ✅ Only show unclaimed found items
 $result = $conn->query("SELECT * FROM items 
     WHERE itemType = 'found' 
-    AND itemId NOT IN (SELECT itemId FROM claim)
+    AND (claimed = FALSE OR claimed IS NULL)
+    ORDER BY reportDate DESC
 ");
 ?>
 
@@ -105,7 +107,7 @@ $result = $conn->query("SELECT * FROM items
       <?php endwhile; ?>
     <?php else: ?>
       <div class="col-12">
-        <div class="alert alert-info text-center">No found items available at the moment.</div>
+        <div class="alert alert-info text-center">No unclaimed found items available at the moment.</div>
       </div>
     <?php endif; ?>
   </div>

@@ -11,7 +11,11 @@ if ($conn->connect_error) {
 }
 
 // ✅ Only show unclaimed found items
-$result = $conn->query("SELECT * FROM items WHERE itemType='Found' AND claimed = FALSE ORDER BY reportDate DESC");
+$result = $conn->query("SELECT * FROM items 
+    WHERE itemType = 'Found' 
+    AND (claimed = FALSE OR claimed IS NULL)
+    ORDER BY reportDate DESC
+");
 ?>
 <!DOCTYPE html>
 <html lang="en">

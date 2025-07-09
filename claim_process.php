@@ -32,16 +32,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $check->close();
 
-    // Insert claim
-    $stmt = $conn->prepare("INSERT INTO claim (dateClaim, timeClaim, itemId, studentId) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssii", $date, $time, $itemId, $studentId);
-    if ($stmt->execute()) {
-        echo "<script>alert('Claim recorded successfully.'); window.location.href='admin_found_items.php';</script>";
-    } else {
-        echo "Error submitting claim: " . $stmt->error;
-    }
+    // Start transaction
+    $conn->begin_transaction();
 
-    $stmt->close();
+    try {
+        // Insert claim record
+        $stmt = $conn->prepare("INSERT INTO claim (dateClaim, timeClaim, itemId, studentId) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssii", $date, $time, $itemId, $studentId);
+        $stmt->execute();
+        $stmt->close();
+
+        // Mark item as claimed in items table
+        $updateStmt = $conn->prepare("UPDATE items SET claimed = TRUE WHERE itemId = ?");
+        $updateStmt->bind_param("i", $itemId);
+        $updateStmt->execute();
+        $updateStmt->close();
+
+        // Commit transaction
+        $conn->commit();
+        
+        echo "<script>alert('Claim recorded successfully. Item is now claimed.'); window.location.href='admin_found_items.php';</script>";
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $conn->rollback();
+        echo "<script>alert('Error processing claim: " . $e->getMessage() . "'); window.location.href='admin_found_items.php';</script>";
+    }
 }
 $conn->close();
 ?>

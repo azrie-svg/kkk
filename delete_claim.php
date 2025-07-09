@@ -11,18 +11,22 @@ if (!isset($_SESSION['studentId']) || $_SESSION['stuLevel'] !== 'Admin') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['claimId'])) {
     $claimId = intval($_POST['claimId']);
 
-    // First, get the itemId from the claim to unclaim the item later
-    $stmt = $conn->prepare("SELECT itemId FROM claim WHERE claimId = ?");
-    $stmt->bind_param("i", $claimId);
-    $stmt->execute();
-    $stmt->bind_result($itemId);
-    if ($stmt->fetch()) {
-        $stmt->close();
+    // Start transaction
+    $conn->begin_transaction();
 
-        // Delete the claim record
-        $delete = $conn->prepare("DELETE FROM claim WHERE claimId = ?");
-        $delete->bind_param("i", $claimId);
-        if ($delete->execute()) {
+    try {
+        // First, get the itemId from the claim
+        $stmt = $conn->prepare("SELECT itemId FROM claim WHERE claimId = ?");
+        $stmt->bind_param("i", $claimId);
+        $stmt->execute();
+        $stmt->bind_result($itemId);
+        if ($stmt->fetch()) {
+            $stmt->close();
+
+            // Delete the claim record
+            $delete = $conn->prepare("DELETE FROM claim WHERE claimId = ?");
+            $delete->bind_param("i", $claimId);
+            $delete->execute();
             $delete->close();
 
             // Set the item back to unclaimed
@@ -31,12 +35,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['claimId'])) {
             $update->execute();
             $update->close();
 
+            // Commit transaction
+            $conn->commit();
             $_SESSION['message'] = "Claim removed and item marked as unclaimed.";
         } else {
-            $_SESSION['message'] = "Failed to delete claim.";
+            $stmt->close();
+            $conn->rollback();
+            $_SESSION['message'] = "Claim not found.";
         }
-    } else {
-        $_SESSION['message'] = "Claim not found.";
+    } catch (Exception $e) {
+        $conn->rollback();
+        $_SESSION['message'] = "Error removing claim: " . $e->getMessage();
     }
 
     header("Location: claim_page.php");
