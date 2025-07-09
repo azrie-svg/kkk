@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | Lost and Found UiTM Kedah</title>
+  <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+  <style>
+    body {
+      font-family: "Nunito", sans-serif;
+      background: url('https://images.unsplash.com/photo-1538137524007-21e48fa42f3f') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .register-container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .register-container h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #55311c;
+    }
+
+    .input-block {
+      margin-bottom: 20px;
+    }
+
+    .input-block label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: #8c7569;
+    }
+
+    .input-block input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .input-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #8c7569;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .input-button:hover {
+      background-color: #55311c;
+    }
+
+    .modal-footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+    }
+
+    .modal-footer a {
+      color: #8c7569;
+      text-decoration: none;
+    }
+
+    .modal-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="register-container">
+    <h2>Register</h2>
+    <form method="POST" action="register.php">
+      <div class="input-block">
+        <label for="studentID">Student ID</label>
+        <input type="text" name="studentID" required>
+      </div>
+      <div class="input-block">
+        <label for="name">Full Name</label>
+        <input type="text" name="name" required>
+      </div>
+      <div class="input-block">
+        <label for="phone">Phone Number</label>
+        <input type="text" name="phone" required>
+      </div>
+      <div class="input-block">
+        <label for="course">Course</label>
+        <input type="text" name="course" required>
+      </div>
+      <div class="input-block">
+        <label for="username">Username</label>
+        <input type="text" name="username" required>
+      </div>
+      <div class="input-block">
+        <label for="password">Password</label>
+        <input type="password" name="password" required>
+      </div>
+      <div class="input-block">
+        <label for="confirm">Confirm Password</label>
+        <input type="password" name="confirm" required>
+      </div>
+
+      <button type="submit" class="input-button">Register</button>
+    </form>
+    <div class="modal-footer">
+      <p>Already have an account? <a href="login.html">Login here</a></p>
+    </div>
+  </div>
+
+</body>
+</html>
